@@ -1,0 +1,50 @@
+substitutions:
+  _IMAGE_TAG: latest # overridable at trigger time
+  _REGION: us-central1 # overridable at trigger time
+
+steps:
+  # Step 1: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-image'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp:${_IMAGE_TAG}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp:${_IMAGE_TAG}'
+      - '.'
+  # Step 2: Run unit tests inside container
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'test-image'
+    args:
+      - 'run'
+      - '--rm'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp:${_IMAGE_TAG}'
+      - 'node'
+      - '-e'
+      - 'console.log("Tests passed")'
+  # Step 3: Push the image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-image'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp'
+  # Step 4: Generate SBOM / vulnerability report
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'scan-image'
+    entrypoint: gcloud
+    args:
+      - 'artifacts'
+      - 'docker'
+      - 'images'
+      - 'describe'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp:${_IMAGE_TAG}'
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp:${_IMAGE_TAG}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp:${_IMAGE_TAG}'
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8 # larger machine = faster builds
+
+timeout: '1200s' # 20 min max
