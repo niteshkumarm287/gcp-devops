@@ -29,7 +29,6 @@ steps:
   args:
     - push
     - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myapp:${_IMAGE_TAG}'
-    - '--require-approval'
 
 # Vulnerability scan
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
