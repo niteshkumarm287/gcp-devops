@@ -19,7 +19,7 @@ steps:
   - deployment/devops-app
   - app=us-central1-docker.pkg.dev/$PROJECT_ID/my-docker-repo/app:$COMMIT_SHA
   env:
-  - 'CLOUDSDK_COMPUTE_REGION=us-central1'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=devops-cluster'
 
 options:
