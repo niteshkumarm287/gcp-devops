@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-app-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-app
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: devops-app
+        version: canary
+    spec:
+      containers:
+      - name: app
+        image: us-central1-docker.pkg.dev/game-d8160/my-docker-repo/app:9d7210ad4ebbc30b1d531e12fd9a320c838abba0
+        ports:
+        - containerPort: 8080
