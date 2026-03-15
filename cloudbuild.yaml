@@ -21,3 +21,6 @@ steps:
   env:
   - 'CLOUDSDK_COMPUTE_REGION=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=devops-cluster'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
